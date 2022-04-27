@@ -4,7 +4,17 @@ const { Client, MessageEmbed, Guild, GuildMember, Intents} = require("discord.js
 const func = require("../functions/func");
 const noEventRes = require("./noevent");
 
-const dojo = async (possibleDibs) => { // 📄📄📄📄📄📄📄📄📄 displays all information on current event
+const possibleDibs = [
+    "couch", 
+    "smolcouch", 
+    "bigcouch", 
+    "matratze", 
+    "feldbett1", 
+    "feldbett2", 
+    "feldbett3"
+];
+
+const dojo = async () => { // 📄📄📄📄📄📄📄📄📄 displays all information on current event
     const nextEvent = await func.getNextEvent();
     const eventDate = new Date(nextEvent.start);
     const eventDateString = eventDate.toLocaleDateString("de-DE", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -54,8 +64,8 @@ const dojo = async (possibleDibs) => { // 📄📄📄📄📄📄📄📄📄 d
 
         const dojoRes = new MessageEmbed()
             .setColor("#0068b3")
-            .setAuthor("Insertgame", "http://www.insertgame.de/dojobot/ig-logo.png", "https://twitter.com/Insertgamedojo")
-            .setThumbnail(func.isValidHttpUrl(nextEvent.event_image) ? nextEvent.event_image : "http://www.insertgame.de/dojobot/time_to_ape.png")
+            .setAuthor("Insertgame", "http://ig0r.insertgame.de/iglogo.png", "https://twitter.com/Insertgamedojo")
+            .setThumbnail(func.isValidHttpUrl(nextEvent.event_image) ? nextEvent.event_image : "http://ig0r.insertgame.de/sanwa.jpg")
             .setTitle(nextEvent.title)
             .setURL("http://www.insertgame.de")
             .setDescription(nextEvent.description)
