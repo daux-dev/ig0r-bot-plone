@@ -13,15 +13,16 @@ const unattend = async (userInfo) => { // ❌❌❌❌❌❌❌❌❌ unregister
             const newList = nextEvent.ig_attendees.list.filter(user => user.discord_id !== userInfo.id);
             const newDoc = {ig_attendees: {list: newList}};
             const res = await func.patchEvent(newDoc, nextEvent);
-
-            const botResponse = new MessageEmbed()
-                .setColor("#e30511")
-                .addFields({name: "Abmeldung", value: "Schade **" + userInfo.name + "**."});
-            return botResponse;
+            if (res) {
+                const botResponse = new MessageEmbed()
+                    .setColor("#e30511")
+                    .addFields({name: "Abmeldung", value: "Schade **" + userInfo.name + "**."});
+                return botResponse;    
+            }
         } else { //❌user is not attending and therefore cannot unregister
             const botResponse = new MessageEmbed()
                 .setColor("#e30511")
-                .addFields({name: "Nicht angemeldet", value: "**" + userInfo.name + "** wie wärs mit **`!+1`** ?"});
+                .addFields({name: "Nicht angemeldet", value: "**" + userInfo.name + "** wie wärs mit **`/attend`** ?"});
             return botResponse;
         }
     } else {

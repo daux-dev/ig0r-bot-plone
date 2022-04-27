@@ -8,7 +8,7 @@ const undibs = async (userInfo) => {
     
     const nextEvent = await func.getNextEvent();
     const attending = func.checkAttendance(userInfo.id, nextEvent);
-    // console.log("USER HAS DIBS:" + userHasDibs);
+
     if (nextEvent && attending) {
         const userHasDibs = nextEvent.ig_attendees.list.filter(user => user.discord_id === userInfo.id)[0].discord_dibs;
         if (userHasDibs) {
@@ -24,14 +24,17 @@ const undibs = async (userInfo) => {
             });
 
             const prevDibs = nextEvent.ig_attendees.list.filter(user => user.discord_id === userInfo.id);
-            // console.log("prevDibs: " + JSON.stringify(prevDibs, null, 2));
+
             const newAttendees = {ig_attendees: {list: updatedDibs}};
             const res = await func.patchEvent(newAttendees, nextEvent);
 
-            const botResponse = new MessageEmbed()
-                .setColor("#e30511")
-                .addFields({name: "Dibs zurückgezogen", value: "**" + userInfo.name + "** macht **" + prevDibs[0].discord_dibs + "** wieder frei."});
-            return botResponse;
+            if (res) {
+                const botResponse = new MessageEmbed()
+                    .setColor("#e30511")
+                    .addFields({name: "Dibs zurückgezogen", value: "**" + userInfo.name + "** macht **" + prevDibs[0].discord_dibs + "** wieder frei."});
+                return botResponse;    
+            }
+            
 
         } else {
             const botResponse = new MessageEmbed()
@@ -42,7 +45,7 @@ const undibs = async (userInfo) => {
     } else if (nextEvent && !attending) {
         const botResponse = new MessageEmbed()
             .setColor("#e30511")
-            .addFields({name: "Nicht angemeldet", value: "**" + userInfo.name + "** wie wärs mit **`!+1`** ?"});
+            .addFields({name: "Nicht angemeldet", value: "**" + userInfo.name + "** wie wärs mit **`/attend`** ?"});
         return botResponse;
     } else {
         return noEventRes;

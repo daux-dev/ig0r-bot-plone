@@ -21,9 +21,9 @@ const getNextEvent = async () => {
                 }
             ]
         }, httpHeaders);
-        if (res.data.items_total > 0 && res.data.items[0].ig_attendees) { //check if at least 1 event exists and contains ig_attendees structure
+        if (res.status === 200 && res.data.items_total > 0 && res.data.items[0].ig_attendees) { //check if at least 1 event exists and contains ig_attendees structure
             return res.data.items[0];
-        } else if (res.data.items_total > 0) { //if event exists but has no ig_attendees structure, create structure.
+        } else if (res.status === 200 && res.data.items_total > 0) { //if event exists but has no ig_attendees structure, create structure.
             const currentEvent = res.data.items[0];
             const listTemplate = {ig_attendees:{ list:[]}};
             const preparedList = await patchEvent(listTemplate, currentEvent);
@@ -55,7 +55,7 @@ const getComingEvents = async () => {
             ]
         }, httpHeaders);
         // console.log(res.data.items.slice(0, 4).length);
-        if (res.data.items_total > 0) {
+        if (res.status === 200 && res.data.items_total > 0) {
             return res.data.items.slice(0, 4);
         } else {
             return false;
@@ -68,10 +68,10 @@ const getComingEvents = async () => {
 const serverUp = async () => {
     try {
         const res = await axios.get("http://" + process.env.API_ADDR, httpHeaders)
-        if (res.status.toString().startsWith("2")/* res.status >= 500 && res.status <= 599 */) {
+        if (res.status === 200) {
             return true;
         } else {
-            console.log("ERROR? STATUS " + res.status);
+            console.log("serverUp() status: " + res.status);
             return false;
         }
     } catch (err) {
@@ -89,7 +89,12 @@ const patchEvent = async (content, event) => {
                 "Content-Type": "application/json"
             }
         });
-        return res;
+        if (res.status === 200) {
+            return res;
+        } else {
+            console.log("patchEvent() status: " + res.status);
+            return false;
+        }
     } catch (err) {
         console.error(err);
     }
@@ -104,7 +109,11 @@ const registerAttend = async (userinfo, event) => {
     const newList = event.ig_attendees.list.concat(newEntry);
     const newDoc = {ig_attendees: {list: newList}};
     const res = await patchEvent(newDoc, event);
-    return res;
+    if (res.status === 200) {
+        return res;
+    } else {
+        return false;
+    }
 }
 
 const checkAttendance = (userid, event) => { //checks if user attends event

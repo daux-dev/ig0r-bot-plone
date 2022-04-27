@@ -26,11 +26,14 @@ const attend = async (userInfo) => {
             const newAttendees = {ig_attendees: {list: updatedDibs}};
             const res = await func.patchEvent(newAttendees, nextEvent);
             // console.log(new Date(res.data.end).toLocaleString("de-DE"));
-
-            const botResponse = new MessageEmbed()
-                .setColor("#009933")
-                .addFields({name: prevDibs ? "Dibs Wechsel" : "Dibs" , value: "**" + userInfo.name + "** " + (prevDibs ? "wechselt von **" + prevDibs + "**" : "hat dibs") + " auf **" + userInfo.dibs + "**."});
-            return botResponse;
+            
+            if (res) {
+                const botResponse = new MessageEmbed()
+                    .setColor("#009933")
+                    .addFields({name: prevDibs ? "Dibs Wechsel" : "Dibs" , value: "**" + userInfo.name + "** " + (prevDibs ? "wechselt von **" + prevDibs + "**" : "hat dibs") + " auf **" + userInfo.dibs + "**."});
+                return botResponse;    
+            }
+            
 
         } else if (attending && !userInfo.dibs) { //❌❌nothing will register (attending and no dibs)
 
@@ -52,30 +55,35 @@ const attend = async (userInfo) => {
             userInfo.dibs = "";
             const res = await func.registerAttend(userInfo, nextEvent);
 
-            const botResponse = new MessageEmbed()
-                .setColor("#009933")
-                .addFields({name: "Neue Anmeldung", value: "**" + userInfo.name + "** wurde angemeldet!\n:no_entry: **" + oldDibs + "** ist aber schon vergeben!"});
-            return botResponse;
+            if (res) {
+                const botResponse = new MessageEmbed()
+                    .setColor("#009933")
+                    .addFields({name: "Neue Anmeldung", value: "**" + userInfo.name + "** wurde angemeldet!\n:no_entry: **" + oldDibs + "** ist aber schon vergeben!"});
+                return botResponse;    
+            }
+            
 
         } else if (!attending && !dibsTaken) {  // ✅✅ user and dibs(if called) are registered
 
             const res = await func.registerAttend(userInfo, nextEvent);
-            // console.log(nextEvent.ig_attendees);
-            // console.log(res.data.ig_attendees);
-            // console.log("user registered");
-
-            const botResponse = new MessageEmbed()
-                .setColor("#009933")
-                .addFields({name: "Neue Anmeldung", value: "**" + userInfo.name + "** wurde angemeldet" + (userInfo.dibs ? "!\nUnd hat dibs auf **" + userInfo.dibs + "**." : "!")});
-            return botResponse;
+            
+            if (res) {
+                const botResponse = new MessageEmbed()
+                    .setColor("#009933")
+                    .addFields({name: "Neue Anmeldung", value: "**" + userInfo.name + "** wurde angemeldet" + (userInfo.dibs ? "!\nUnd hat dibs auf **" + userInfo.dibs + "**." : "!")});
+                return botResponse;    
+            }
+            
 
         } else {
+            const dateNow = new Date().toLocaleString();
+            console.log(dateNow + "\n" + JSON.stringify(userInfo, null, 2) + "\n" + JSON.stringify(nextEvent, null, 2));
+            
             const botResponse = new MessageEmbed()
                 .setColor("#e30511")
                 .addFields({name: "??????", value: "Etwas unerwartetes ist passiert.\n<@161576641187807232> sollte sich das mal ansehen!"});
             return botResponse;
-            const dateNow = new Date().toLocaleString();
-            console.log(dateNow + "\n" + JSON.stringify(userInfo, null, 2) + "\n" + JSON.stringify(nextEvent, null, 2));
+            
         }
     } else {
         return noEventRes;
