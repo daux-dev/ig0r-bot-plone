@@ -13,8 +13,13 @@ const links = require("./interactions/links");
 
 const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 
+const banned = ["<@183976754015109120>","<@701820453022597271>"]; //list discord user IDs not allowed to use the bot
+
 client.on("ready", async () => {
     try {
+        const timeStamp = new Date();
+        console.log(timeStamp.toLocaleString("de-DE")); //log server start time
+
         console.log("IGor III is ready.");
         console.log(await func.serverUp() ? "API SERVER OK" : "API SERVER ERROR");
 
@@ -22,6 +27,9 @@ client.on("ready", async () => {
 
         let notified = false;
         setInterval(async () => {
+            const timeStamp = new Date();
+            console.log(timeStamp.toLocaleString("de-DE")); //log api check time
+
             if (!notified && await func.serverUp()) { //periodically call API and report to discord admins when down or available again
                 console.log("SERVER IS OK");
             } else if (!notified) {
@@ -51,32 +59,40 @@ client.on('interactionCreate', async interaction => {
             return;
         }
     }
-
+    
     const userInfo = {
         name: interaction.member.nickname ? interaction.member.nickname : interaction.user.username, //use server nickname instead of global username when available
         id: "<@" + interaction.user.id + ">",
         dibs: ifDibs(interaction.options._hoistedOptions) // 🤮
     }
 
-    switch(commandName) { //command handling
-        case "dojo":
-            await interaction.reply({embeds: [await dojo()]});
-            break;
-        case "attend":
-            await interaction.reply({embeds: [await attend(userInfo)]});
-            break;
-        case "unattend":
-            await interaction.reply({embeds: [await unattend(userInfo)]});
-            break;
-        case "undibs":
-            await interaction.reply({embeds: [await undibs(userInfo)]});
-            break;
-        case "events":
-            await interaction.reply({embeds: [await events()]});
-            break;
-        case "links":
-            await interaction.reply({embeds: [await links()]});
-            break;
+    const timeStamp = new Date();
+    console.log(timeStamp.toLocaleString("de-DE")); //log time of interaction
+    console.log(`${userInfo.name} - ${userInfo.id} - /${commandName}` + (banned.includes(userInfo.id) ? " //BANNED" : "")); //log interaction info
+
+    if (!banned.includes(userInfo.id)) { //check if user is not banned before handling commands
+    
+        switch(commandName) { //command handling
+            case "dojo":
+                await interaction.reply({embeds: [await dojo()]});
+                break;
+            case "attend":
+                await interaction.reply({embeds: [await attend(userInfo)]});
+                break;
+            case "unattend":
+                await interaction.reply({embeds: [await unattend(userInfo)]});
+                break;
+            case "undibs":
+                await interaction.reply({embeds: [await undibs(userInfo)]});
+                break;
+            case "events":
+                await interaction.reply({embeds: [await events()]});
+                break;
+            case "links":
+                await interaction.reply({embeds: [await links()]});
+                break;
+        }
+
     }
 });
 
