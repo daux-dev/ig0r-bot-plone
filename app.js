@@ -13,7 +13,7 @@ const links = require("./interactions/links");
 
 const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 
-const banned = ["<@183976754015109120>","<@701820453022597271>"]; //list discord user IDs not allowed to use the bot
+const banned = ["<@701820453022597271>"]; //list discord user IDs not allowed to use the bot
 
 client.on("ready", async () => {
     try {
