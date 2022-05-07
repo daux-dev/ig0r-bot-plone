@@ -71,25 +71,26 @@ client.on('interactionCreate', async interaction => {
     console.log(`${userInfo.name} - ${userInfo.id} - /${commandName}` + (banned.includes(userInfo.id) ? " //BANNED" : "")); //log interaction info
 
     if (!banned.includes(userInfo.id)) { //check if user is not banned before handling commands
+        await interaction.deferReply();
     
         switch(commandName) { //command handling
             case "dojo":
-                await interaction.reply({embeds: [await dojo()]});
+                await interaction.editReply({embeds: [await dojo()]});
                 break;
             case "attend":
-                await interaction.reply({embeds: [await attend(userInfo)]});
+                await interaction.editReply({embeds: [await attend(userInfo)]});
                 break;
             case "unattend":
-                await interaction.reply({embeds: [await unattend(userInfo)]});
+                await interaction.editReply({embeds: [await unattend(userInfo)]});
                 break;
             case "undibs":
-                await interaction.reply({embeds: [await undibs(userInfo)]});
+                await interaction.editReply({embeds: [await undibs(userInfo)]});
                 break;
             case "events":
-                await interaction.reply({embeds: [await events()]});
+                await interaction.editReply({embeds: [await events()]});
                 break;
             case "links":
-                await interaction.reply({embeds: [await links()]});
+                await interaction.editReply({embeds: [await links()]});
                 break;
         }
 
