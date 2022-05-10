@@ -26,17 +26,18 @@ client.on("ready", async () => {
         const adminChannel = client.channels.cache.get(process.env.ADMIN_CHANNEL);
 
         let notified = false;
-        setInterval(async () => {
+        setInterval(async () => { //periodically call API and report to discord admins when down or available again
             const timeStamp = new Date();
-            console.log(timeStamp.toLocaleString("de-DE")); //log api check time
 
-            if (!notified && await func.serverUp()) { //periodically call API and report to discord admins when down or available again
-                console.log("SERVER IS OK");
+            if (!notified && await func.serverUp()) { 
+                // console.log("SERVER IS OK"); // stop logging that. 
             } else if (!notified) {
+                console.log(timeStamp.toLocaleString("de-DE")); //log api check time
                 console.log("SERVER IS DOWN");
                 adminChannel.send(":fearful: API nicht erreichbar. <@161576641187807232> <@85529712348135424>");
                 notified = true;
             } else if (notified && await func.serverUp()) {
+                console.log(timeStamp.toLocaleString("de-DE")); //log api check time
                 console.log("SERVER IS OK AGAIN");
                 adminChannel.send(":relaxed: API ist wieder erreichbar. <@161576641187807232> <@85529712348135424>");
                 notified = false;
