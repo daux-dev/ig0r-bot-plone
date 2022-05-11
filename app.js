@@ -50,6 +50,7 @@ client.on("ready", async () => {
 
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
+    await interaction.deferReply();
 
 	const { commandName } = interaction;
 
@@ -72,7 +73,6 @@ client.on('interactionCreate', async interaction => {
     console.log(`${userInfo.name} - ${userInfo.id} - /${commandName}` + (banned.includes(userInfo.id) ? " //BANNED" : "")); //log interaction info
 
     if (!banned.includes(userInfo.id)) { //check if user is not banned before handling commands
-        await interaction.deferReply();
     
         switch(commandName) { //command handling
             case "dojo":
@@ -95,6 +95,8 @@ client.on('interactionCreate', async interaction => {
                 break;
         }
 
+    } else {
+        await interaction.deleteReply();
     }
 });
 
