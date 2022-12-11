@@ -1,4 +1,5 @@
-# IG0r-bot
+# ig0r-plone
+## Abandoned. Not using Plone as backend anymore. Made my own web interface. New rep here: https://github.com/daux-dev/ig0r-bot-z00
 [Discord](https://discord.com) BOT used to manage attendance for a local arcade gaming meetup.
 
 Events (meetups) are registered in a self hosted [Plone](https://plone.org/) CMS. Through IG0r users can register and show information about the next event with chat commands. For that to work IG0r sends requests to the Plone REST API.
